@@ -1,8 +1,9 @@
 ### Color-Text
 #### Docs
-% + text_color
-$ + bg_color + text_color
+`% + text_color`
+`$ + bg_color + text_color`
 Colors:
+```
 Black       %0
 DarkBlue    %1
 DarkGreen   %2
@@ -19,6 +20,7 @@ Red         %c
 Purple      %d
 Yellow      %e
 White       %f
+```
 #### Example
 ```cpp
 const auto& code = R"(%8#include %6<iostream>
