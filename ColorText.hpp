@@ -23,29 +23,54 @@ enum class Color {
 
 class color_string : public string { };
 ostream& operator<<(ostream& os, const color_string& v) {
-    bool c_time = false;
+    bool c_time = false, w_time = false, b_slash = false;
     string t;
-    Color color = Color::White;
+    Color color = Color::White, bg = Color::Black;
     static const auto& hand = GetStdHandle(STD_OUTPUT_HANDLE);
     for (const auto& i : v) {
         if (c_time) {
-            if (i >= '0' and i <= '9')
-                color = Color(i - '0');
-            else if (i >= 'a' and i <= 'f')
-                color = Color(10 + i - 'a');
+            if (i >= '0' and i <= '9') {
+                if (w_time) {
+                    bg = Color(i - '0');
+                    w_time = false;
+                }
+                else {
+                    color = Color(i - '0');
+                    c_time = false;
+                }
+            }
+            else if (i >= 'a' and i <= 'f') {
+                if (w_time) {
+                    bg = Color(10 + i - 'a');
+                    w_time = false;
+                }
+                else {
+                    color = Color(10 + i - 'a');
+                    c_time = false;
+                }
+            }
             else {
                 os << i;
+                c_time = false;
                 continue;
             };
-            SetConsoleTextAttribute(hand, (WORD)color);
-            c_time = false;
+            SetConsoleTextAttribute(hand, (WORD)bg * 16 + (WORD)color);
             continue;
-        };
+        }
         switch (i) {
+        case '\\':
+            b_slash = !b_slash;
+            break;
         case '%':
-            c_time = true;
+            if (!b_slash)
+                c_time = true;
+            break;
+        case '$':
+            if (!b_slash)
+                w_time = c_time = true;
             break;
         default:
+            b_slash = false;
             os << i;
         };
     };
